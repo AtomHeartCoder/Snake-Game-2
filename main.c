@@ -155,7 +155,10 @@ int map_print(FILE *fp)
         return 1;
     }
     char c;
-    int i = 0, j = 0, max_j = 0;
+    int i, j, max_j = 0;
+    for(i = 0; i < MAX_HEIGHT; i++)
+        for(j = 0; j < MAX_WIDTH; j++)
+            map[i][j] = '0';
     // Here below is to print blocks
     for(i = 0; (c = fgetc(fp)) != EOF; i++){
         ungetc(c, fp);
@@ -187,6 +190,12 @@ int map_print(FILE *fp)
             break;
         }
     }
+    if(i < 2 || j < 2){
+        goprint(5, 5, "The map size is too small!");
+        _getch();
+        system("cls");
+        return 2;
+    }
     map_height = i, map_width = max_j;
     for(i = 0; i < map_height; i++){                       /* Flexibly recognize the map */
         for(j = 0; j < map_width; j++)
@@ -197,20 +206,20 @@ int map_print(FILE *fp)
     for(i = 0; i < map_height; i++)
         for(j = 0; j < map_width; j++)
             if(map[i][j] == '1')
-                goprint(j, i, "¨€");
+                goprint(j, i, "Â¨â‚¬");
     // Here below is to print the boundary
     for(i = 0; i < map_height; i++){
-        goprint(map_width, i, "©ª");
-        goprint(-1, i, "©ª");
+        goprint(map_width, i, "Â©Âª");
+        goprint(-1, i, "Â©Âª");
     }
     for(j = 0; j < map_width; j++){
-        goprint(j, map_height, "©¨");
-        goprint(j, -1, "©¨");
+        goprint(j, map_height, "Â©Â¨");
+        goprint(j, -1, "Â©Â¨");
     }
-    goprint(-1, -1, "©°");
-    goprint(map_width, -1, "©´");
-    goprint(-1, map_height, "©¸");
-    goprint(map_width, map_height, "©¼");
+    goprint(-1, -1, "Â©Â°");
+    goprint(map_width, -1, "Â©Â´");
+    goprint(-1, map_height, "Â©Â¸");
+    goprint(map_width, map_height, "Â©Â¼");
     return 0;
 }
 
@@ -254,10 +263,10 @@ void food_create(void)
             continue;
         }
     }while(sign);
-    goprint(food.x, food.y, "¡ñ");
+    goprint(food.x, food.y, "Â¡Ã±");
     map[food.y][food.x] = '2';
     if(award == 5){
-        goprint(award_food.x, award_food.y, "¡ï");
+        goprint(award_food.x, award_food.y, "Â¡Ã¯");
         map[award_food.y][award_food.x] = '3';
     }
 }
@@ -324,9 +333,9 @@ int snake_create(void)
     snake_tail.x = snake_head.x + 2 * x;
     snake_tail.y = snake_head.y + 2 * y;
     for(i = 0; i < 6; i++){                                /* Let the snake flash to catch player's attention */
-        goprint(snake_tail.x, snake_tail.y, "¡ö");
-        goprint(snake_head.x + x, snake_head.y + y, "¡ö");
-        goprint(snake_head.x, snake_head.y, "¡ö");
+        goprint(snake_tail.x, snake_tail.y, "Â¡Ã¶");
+        goprint(snake_head.x + x, snake_head.y + y, "Â¡Ã¶");
+        goprint(snake_head.x, snake_head.y, "Â¡Ã¶");
         if(i == 5)
             break;
         Sleep(80);
@@ -360,7 +369,7 @@ void snake_control(void)
         snake_move();
     }
     if(control != 'p')
-        goprint(snake_head.x, snake_head.y, "¡Á");
+        goprint(snake_head.x, snake_head.y, "Â¡Ã");
 }
 
 // This function let the snake move
@@ -434,7 +443,7 @@ void snake_move(void)
     }
     map[snake_head.y][snake_head.x] = direction;
     snake_head = snake_front;
-    goprint(snake_head.x, snake_head.y, "¡ö");
+    goprint(snake_head.x, snake_head.y, "Â¡Ã¶");
     if(award_food.x != -1)
             progress_bar();
 }
@@ -451,7 +460,7 @@ void progress_bar(void)
 {
     if(award == 5){
         goprint(margin, 13, "Award Food:");
-        goprint(margin, 14, "¨€¨€¨€¨€¨€¨€¨€¨€¨€¨€");
+        goprint(margin, 14, "Â¨â‚¬Â¨â‚¬Â¨â‚¬Â¨â‚¬Â¨â‚¬Â¨â‚¬Â¨â‚¬Â¨â‚¬Â¨â‚¬Â¨â‚¬");
         award_score = 100;
         award = 0;
     }
@@ -478,15 +487,15 @@ void quit(void)
     for(i = 0; i < 7; i++)
         for(j = 0; j < 14; j++)
             if(i == 0 || i == 6)
-                goprint(map_width / 2 - 7 + j, map_height / 2 - 3 + i, "©¨");
+                goprint(map_width / 2 - 7 + j, map_height / 2 - 3 + i, "Â©Â¨");
             else if(j == 0 || j == 13)
-                goprint(map_width / 2 - 7 + j, map_height / 2 - 3 + i, "©ª");
+                goprint(map_width / 2 - 7 + j, map_height / 2 - 3 + i, "Â©Âª");
             else
                 goprint(map_width / 2 - 7 + j, map_height / 2 - 3 + i, "  ");
-    goprint(map_width / 2 - 7, map_height / 2 - 3, "©°");
-    goprint(map_width / 2 + 6, map_height / 2 - 3, "©´");
-    goprint(map_width / 2 - 7, map_height / 2 + 3, "©¸");
-    goprint(map_width / 2 + 6, map_height / 2 + 3, "©¼");
+    goprint(map_width / 2 - 7, map_height / 2 - 3, "Â©Â°");
+    goprint(map_width / 2 + 6, map_height / 2 - 3, "Â©Â´");
+    goprint(map_width / 2 - 7, map_height / 2 + 3, "Â©Â¸");
+    goprint(map_width / 2 + 6, map_height / 2 + 3, "Â©Â¼");
     if(lose){
         system("color 01");
         Sleep(100);
